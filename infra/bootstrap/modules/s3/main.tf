@@ -1,8 +1,8 @@
 resource "aws_s3_bucket" "eks-bootstrap" {
-  bucket = "eks-bootstrap-bucket-for-terraform-state"
-  object_lock_enabled = true
+  bucket = var.s3-bucket-name
+  
   tags = {
-    Name        = "EKS bootstrap bucket"
+    Name        = var.s3-bucket-tag
   }
 }
 
@@ -10,7 +10,7 @@ resource "aws_s3_bucket_ownership_controls" "disable-acl" {
   bucket = aws_s3_bucket.eks-bootstrap.id
 
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = var.s3-bucket-object-ownership
   }
 }
 
@@ -27,7 +27,7 @@ resource "aws_s3_bucket_versioning" "enabled" {
   bucket = aws_s3_bucket.eks-bootstrap.id
 
   versioning_configuration {
-    status = "Enabled"
+    status = var.s3-bucket-versioning-status
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "sse-s3" {
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm = var.s3-bucket-sse-algorithm
     }
   }
 }
